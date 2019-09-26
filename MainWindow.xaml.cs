@@ -25,6 +25,8 @@ namespace Quick
 
         int[] a = new int[SIZE];
         Random r = new Random();
+        private int PartitionSize = 0;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -49,24 +51,33 @@ namespace Quick
             for (int i = 0; i < SIZE; i++)
                 a[i] = r.Next(MAX);
         }
-
+        //QuickSort 버튼 클릭
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            var watch = System.Diagnostics.Stopwatch.StartNew();
-            QuickSort(a, 0, SIZE - 1);
-            watch.Stop();
-            textBox.Text += " \n " + watch.ElapsedMilliseconds + " ms ";
-            PrintArray();
+            for (PartitionSize = 0; PartitionSize < 10; PartitionSize++)
+            {
+                MakeRandomArray();
+                var watch = System.Diagnostics.Stopwatch.StartNew();
+                QuickSort(a, 0, SIZE - 1);
+                watch.Stop();
+                textBox.Text += " \n " +PartitionSize+": "+ watch.ElapsedMilliseconds + " ms ";
+                PrintArray();
+            }
         }
 
         private void QuickSort(int[] a, int left, int right)
         {
-            if(left < right)
+            if (left < right)
             {
-                int p = Partition(a, left, right);
+                if (right - left > PartitionSize)
+                {
+                    int p = Partition(a, left, right);
 
-                QuickSort(a, left, p - 1);
-                QuickSort(a, p + 1, right);
+                    QuickSort(a, left, p - 1);
+                    QuickSort(a, p + 1, right);
+                }
+                else
+                    SlowSort(a, left, right);
             }
         }
 
@@ -117,8 +128,8 @@ namespace Quick
 
         private void SlowSort(int[] a, int left, int right)
         {
-            for (int i = 0; i < SIZE-1; i++)
-                for (int j = i+1; j < SIZE; j++)
+            for (int i = left; i < right; i++)
+                for (int j = i+1; j <= right; j++)
                     if(a[i]> a[j])
                 {
                         int t = a[i];
